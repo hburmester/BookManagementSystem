@@ -1,10 +1,11 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Header
-from dotenv import dotenv_values
+import os
 from routes import book_router, user_router
 from pymongo import MongoClient
 
-config = dotenv_values(".env")
+MONGODB_ATLAS_URI = os.environ.get("MONGODB_ATLAS_URI")
+DB_NAME = os.environ.get("DB_NAME")
 
 sample_books = [
     {"title": "Book 1", "author": "Author 1", "published_date": "2023-01-01", "genre": "Fiction", "price": 19.99},
@@ -22,8 +23,8 @@ sample_users = [
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.mongodb_client = MongoClient(config["MONGODB_ATLAS_URI"])
-    app.database = app.mongodb_client[config["DB_NAME"]]
+    app.mongodb_client = MongoClient(MONGODB_ATLAS_URI)
+    app.database = app.mongodb_client(DB_NAME)
     app.book_collection = app.database["books"]
     app.user_collection = app.database["users"]
     app.book_collection.insert_many(sample_books)

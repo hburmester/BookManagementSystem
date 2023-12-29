@@ -2,11 +2,12 @@ from fastapi import APIRouter, Body, Request, Response, HTTPException, status, Q
 from fastapi.encoders import jsonable_encoder
 from typing import List
 from datetime import datetime, timedelta
-from dotenv import dotenv_values
+import os
 from models import Book, BookUpdate, UserCheck, User
 from authentication import create_access_token, get_current_user
 
-config = dotenv_values(".env")
+ACCESS_TOKEN_EXPIRE_MINUTES= os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES")
+
 
 book_router = APIRouter()
 user_router = APIRouter()
@@ -95,7 +96,7 @@ def get_average_price(year: int, request: Request):
 async def login_for_access_token(form_data: UserCheck, request: Request):
 
     if request.app.database["users"].find_one({"username": form_data.username}):
-        access_token_expires = timedelta(minutes=int(config["ACCESS_TOKEN_EXPIRE_MINUTES"]))
+        access_token_expires = timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
         access_token = create_access_token(data={"sub": form_data.username}, expires_delta=access_token_expires)
         new_user = User(username=form_data.username, password=form_data.password, token = access_token)
         new_user = jsonable_encoder(new_user)
