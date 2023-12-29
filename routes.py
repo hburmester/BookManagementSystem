@@ -135,9 +135,9 @@ async def get_users(request: Request):
     users = list(request.app.database["users"].find())
     return users
 
-@welcome_router.get("/", response_class=HTMLResponse)
+@welcome_router.get("/", tags=["welcome"] ,response_class=HTMLResponse)
 async def welcome_page(request: Request):
-    with open("./welcome_page.html", "r") as file:
+    with open("welcome_page.html", "r") as file:
         html_content = file.read()
 
     return HTMLResponse(content=html_content, status_code=200)

@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from dotenv import dotenv_values
-from routes import book_router, user_router
+from routes import book_router, user_router, welcome_router
 from pymongo import MongoClient
 import os
 
@@ -45,3 +45,4 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(book_router, tags=["books"], prefix="/book")
 app.include_router(user_router, tags=["userAuth"], prefix="/userAuth")
+app.include_router(welcome_router, tags=["welcome"])
