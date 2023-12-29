@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Body, Request, Response, HTTPException, status, Query, Depends, Header
+from fastapi.responses import HTMLResponse
 from fastapi.encoders import jsonable_encoder
 from typing import List
 from datetime import datetime, timedelta
@@ -8,9 +9,9 @@ from authentication import create_access_token, get_current_user
 
 ACCESS_TOKEN_EXPIRE_MINUTES= os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES")
 
-
 book_router = APIRouter()
 user_router = APIRouter()
+welcome_router = APIRouter()
 
 @book_router.post("/", response_description="Create a new book", status_code=status.HTTP_201_CREATED, response_model=Book)
 def create_book(request: Request, book: Book = Body(...)):
@@ -127,3 +128,10 @@ async def get_usersame(request: Request, token: str):
 async def get_users(request: Request):
     users = list(request.app.database["users"].find())
     return users
+
+@welcome_router.get("/", response_class=HTMLResponse)
+async def welcome_page(request: Request):
+    with open("welcome_page.html", "r") as file:
+        html_content = file.read()
+
+    return HTMLResponse(content=html_content, status_code=200)

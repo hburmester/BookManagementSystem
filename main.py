@@ -1,8 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Header, Request
 import os
-from fastapi.responses import HTMLResponse
-from routes import book_router, user_router
+from routes import book_router, user_router, welcome_router
 from pymongo import MongoClient
 
 MONGODB_ATLAS_URI = os.environ.get("MONGODB_ATLAS_URI")
@@ -37,12 +36,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-@router.get("/", response_class=HTMLResponse)
-async def welcome_page(request: Request):
-    with open("welcome_page.html", "r") as file:
-        html_content = file.read()
-
-    return HTMLResponse(content=html_content, status_code=200)
-
 app.include_router(book_router, tags=["books"], prefix="/book")
 app.include_router(user_router, tags=["userAuth"], prefix="/userAuth")
+app.include_router(welcome_router, tags=["welcome"], prefix="/welcome")
