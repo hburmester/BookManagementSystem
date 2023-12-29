@@ -59,3 +59,17 @@ To implement tests cases
 ## authentication.py
 
 To implement user authentication using OATH2
+
+### Heroku Endpoints
+
+GET https://book-management-seek-fb49ceb1fdf6.herokuapp.com/book/
+
+POST https://book-management-seek-fb49ceb1fdf6.herokuapp.com/book/
+
+GET https://book-management-seek-fb49ceb1fdf6.herokuapp.com/book/{title}
+
+PUT https://book-management-seek-fb49ceb1fdf6.herokuapp.com/book/{title}
+
+DELETE https://book-management-seek-fb49ceb1fdf6.herokuapp.com/book/{title}
+
+GET https://book-management-seek-fb49ceb1fdf6.herokuapp.com/book/average_price/{year}
