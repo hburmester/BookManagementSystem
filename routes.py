@@ -137,7 +137,7 @@ async def get_users(request: Request):
 
 @welcome_router.get("/", tags=["welcome"] ,response_class=HTMLResponse)
 async def welcome_page(request: Request):
-    with open("welcome_page.html", "r") as file:
+    with open("App/welcome_page.html", "r") as file:
         html_content = file.read()
 
     return HTMLResponse(content=html_content, status_code=200)
