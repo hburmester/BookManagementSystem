@@ -22,15 +22,20 @@ welcome_router = APIRouter()
 @book_router.post("/", response_description="Create a new book", status_code=status.HTTP_201_CREATED, response_model=Book)
 def create_book(request: Request, book: Book = Body(...)):
     # Convert datetime.date to datetime.datetime for MongoDB compatibility
-    book.published_date = datetime.combine(book.published_date, datetime.min.time()) 
+    try:
+        book.published_date = datetime.combine(book.published_date, datetime.min.time()) 
+    except:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Issue with the date")
 
     book = jsonable_encoder(book)
     new_book = request.app.database["books"].insert_one(book)
     created_book = request.app.database["books"].find_one(
         {"_id": new_book.inserted_id}
     )
-    
-    return created_book
+    if created_book:
+        return created_book
+    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Book was not created")
+        
 
 @book_router.get("/", response_description="List all books", response_model=List[Book])
 def list_books(request: Request, page: int = Query(1, gt=0), per_page: int = Query(3, gt=0)):
@@ -42,7 +47,7 @@ def list_books(request: Request, page: int = Query(1, gt=0), per_page: int = Que
 def find_book(title: str, request: Request, ):
     if (book := request.app.database["books"].find_one({"title": title})) is not None:
         return book
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Book with title {title} not found")
+    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Book with title {title} not found")
 
 @book_router.put("/{title}", response_description="Update a book", response_model=Book)
 def update_book(title: str, request: Request, newBook: BookUpdate = Body(...)):
@@ -66,7 +71,7 @@ def update_book(title: str, request: Request, newBook: BookUpdate = Body(...)):
                     return_document=True,
                 )
             except:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Book with title {title} not updated")
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Book with title {title} not updated")
 
             # Returning book as response
             return update_result
@@ -82,7 +87,7 @@ def delete_book(title: str, request: Request, response: Response):
         response.status_code = status.HTTP_204_NO_CONTENT
         return response
 
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Book with title {title} not found")
+    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Book with title {title} not found")
 
 @book_router.get("/average_price/{year}", response_description="Get average price after a year")
 def get_average_price(year: int, request: Request):
@@ -97,7 +102,7 @@ def get_average_price(year: int, request: Request):
         average_price = result[0]["average_price"]
         return {"average_price": str(round(average_price, 2))}
     
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No books found after the specified year")
+    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"No books found after the specified year")
 
 @user_router.post("/sign_up", response_model=User)
 async def login_for_access_token(form_data: UserCheck, request: Request):
