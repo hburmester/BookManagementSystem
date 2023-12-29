@@ -24,7 +24,7 @@ sample_users = [
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.mongodb_client = MongoClient(MONGODB_ATLAS_URI)
-    app.database = app.mongodb_client(DB_NAME)
+    app.database = app.mongodb_client[DB_NAME]
     app.book_collection = app.database["books"]
     app.user_collection = app.database["users"]
     app.book_collection.insert_many(sample_books)
