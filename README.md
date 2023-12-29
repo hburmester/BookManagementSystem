@@ -43,3 +43,19 @@ Run the FastAPI application:
 ```bash
 uvicorn main:app --reload
 ```
+
+## Postman Documentation
+
+You can find the Postman Documentation in the PostmanCollection folder
+
+## Swagger Documentation
+
+You can find the Swagger Documentation in the SwaggerDoc folder
+
+## test_main.py
+
+To implement tests cases
+
+## authentication.py
+
+To implement user authentication using OATH2
