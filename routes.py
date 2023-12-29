@@ -3,11 +3,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.encoders import jsonable_encoder
 from typing import List
 from datetime import datetime, timedelta
-import os
 from models import Book, BookUpdate, UserCheck, User
 from authentication import create_access_token, get_current_user
+from dotenv import dotenv_values
 
-ACCESS_TOKEN_EXPIRE_MINUTES= os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES")
+config = dotenv_values(".env")
 
 book_router = APIRouter()
 user_router = APIRouter()
@@ -97,7 +97,7 @@ def get_average_price(year: int, request: Request):
 async def login_for_access_token(form_data: UserCheck, request: Request):
 
     if request.app.database["users"].find_one({"username": form_data.username}):
-        access_token_expires = timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
+        access_token_expires = timedelta(minutes=int(config["ACCESS_TOKEN_EXPIRE_MINUTES"]))
         access_token = create_access_token(data={"sub": form_data.username}, expires_delta=access_token_expires)
         new_user = User(username=form_data.username, password=form_data.password, token = access_token)
         new_user = jsonable_encoder(new_user)
@@ -131,7 +131,7 @@ async def get_users(request: Request):
 
 @welcome_router.get("/", response_class=HTMLResponse)
 async def welcome_page(request: Request):
-    with open("welcome_page.html", "r") as file:
+    with open("./welcome_page.html", "r") as file:
         html_content = file.read()
 
     return HTMLResponse(content=html_content, status_code=200)

@@ -4,10 +4,9 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from models import TokenData
 from datetime import datetime, timedelta
-import os
+from dotenv import dotenv_values
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
-ALGORITHM = os.environ.get('ALGORITHM')
+config = dotenv_values(".env")
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
