@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Header
+from fastapi import FastAPI, HTTPException, Header, HTMLResponse, Request
 import os
 from routes import book_router, user_router
 from pymongo import MongoClient
@@ -35,6 +35,13 @@ async def lifespan(app: FastAPI):
     app.mongodb_client.close()
 
 app = FastAPI(lifespan=lifespan)
+
+@router.get("/", response_class=HTMLResponse)
+async def welcome_page(request: Request):
+    with open("welcome_page.html", "r") as file:
+        html_content = file.read()
+
+    return HTMLResponse(content=html_content, status_code=200)
 
 app.include_router(book_router, tags=["books"], prefix="/book")
 app.include_router(user_router, tags=["userAuth"], prefix="/userAuth")

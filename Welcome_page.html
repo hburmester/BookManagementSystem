@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Book Management System</title>
+</head>
+<body>
+    <h1>Welcome to the Book Management System</h1>
+
+    <h2>About</h2>
+    <p>
+        This is a simple Book Management System. It allows you to perform various operations on books
+        such as creating, updating, deleting, and listing books. Additionally, there is an endpoint to
+        get the average price of books published after a specific year.
+    </p>
+
+    <h2>Endpoints</h2>
+    <ul>
+        <li><strong>Create a new book:</strong> POST /books/</li>
+        <li><strong>List all books:</strong> GET /books/</li>
+        <li><strong>Get a single book by title:</strong> GET /books/{title}</li>
+        <li><strong>Update a book:</strong> PUT /books/{title}</li>
+        <li><strong>Delete a book:</strong> DELETE /books/{title}</li>
+        <li><strong>Get average price after a year:</strong> GET /books/average_price/{year}</li>
+    </ul>
+</body>
+</html>
