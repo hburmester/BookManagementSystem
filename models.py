@@ -16,3 +16,19 @@ class BookUpdate(BaseModel):
     published_date: Optional[date]
     genre: Optional[str]
     price: Optional[float]
+    
+class UserCheck(BaseModel):
+    username: str = Field(...)
+    password: str = Field(...)
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class User(BaseModel):
+    username: str = Field(...)
+    password: str = Field(...)
+    token: str | None = None
+
+class TokenData(BaseModel):
+    token: str | None = None

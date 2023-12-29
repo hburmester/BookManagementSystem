@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Header
 from dotenv import dotenv_values
-from routes import router as book_router
+from routes import book_router, user_router
 from pymongo import MongoClient
 
 config = dotenv_values(".env")
@@ -14,16 +14,26 @@ sample_books = [
     {"title": "Book 5", "author": "Author 5", "published_date": "2019-12-12", "genre": "Fantasy", "price": 18.99},
 ]
 
+sample_users = [
+    {"username": "hburmester", "password": "passtest", "token": None},
+    {"username": "wburmester", "password": "testword", "token": None},
+    {"username": "aburmester", "password": "wordpass", "token": None}
+]
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.mongodb_client = MongoClient(config["MONGODB_ATLAS_URI"])
     app.database = app.mongodb_client[config["DB_NAME"]]
-    app.collection = app.database["books"]
-    print(app.collection.insert_many(sample_books))
+    app.book_collection = app.database["books"]
+    app.user_collection = app.database["users"]
+    app.book_collection.insert_many(sample_books)
+    app.user_collection.insert_many(sample_users)
     yield
-    app.collection.delete_many({})
+    app.book_collection.delete_many({})
+    app.user_collection.delete_many({})
     app.mongodb_client.close()
 
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(book_router, tags=["books"], prefix="/book")
+app.include_router(user_router, tags=["userAuth"], prefix="/userAuth")
