@@ -7,8 +7,6 @@ from datetime import datetime, timedelta
 from dotenv import dotenv_values
 
 config = dotenv_values(".env")
-SECRET_KEY = (config["SECRET_KEY"])
-ALGORITHM = (config["ALGORITHM"])
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -17,12 +15,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, config["SECRET_KEY"], algorithm=[config["ALGORITHM"]])
     return encoded_jwt
 
 def decode_token(token: str, credentials_exception):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, config["SECRET_KEY"], algorithms=[config["ALGORITHM"]])
         return TokenData(username=payload.get("sub"))
     except JWTError:
         raise credentials_exception
