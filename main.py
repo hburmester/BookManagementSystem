@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Header, HTMLResponse, Request
+from fastapi import FastAPI, HTTPException, Header, Request
 import os
+from fastapi.responses import HTMLResponse
 from routes import book_router, user_router
 from pymongo import MongoClient
 
